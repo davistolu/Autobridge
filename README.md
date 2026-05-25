@@ -450,10 +450,10 @@ Add and manage Claude API keys. Keys are stored AES-256 encrypted and shown only
 | Python | FastAPI | `pip install autobridge-sdk` | ✅ Full |
 | Python | Django | `pip install autobridge-sdk` | ✅ Full |
 | Python | Bottle | `pip install autobridge-sdk` | ✅ Full |
-| TypeScript | Express | `npm install @autobridge/sdk` | ✅ Full |
-| TypeScript | Fastify | `npm install @autobridge/sdk` | ✅ Full |
-| TypeScript | Next.js | `npm install @autobridge/sdk` | ✅ Full |
-| JavaScript | Any Node.js | `npm install @autobridge/sdk` | ✅ Full |
+| TypeScript | Express | `npm i @autobridge/sdk` | ✅ Full |
+| TypeScript | Fastify | `npm i @autobridge/sdk` | ✅ Full |
+| TypeScript | Next.js | `npm i @autobridge/sdk` | ✅ Full |
+| JavaScript | Any Node.js | `npm i @autobridge/sdk` | ✅ Full |
 | Go | net/http | `go get github.com/autobridge/sdk-go` | ✅ Full |
 | Go | Gin | `go get github.com/autobridge/sdk-go` | ✅ Full |
 | Go | Echo / Chi / Fiber | `go get github.com/autobridge/sdk-go` | ✅ Full |
