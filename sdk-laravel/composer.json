@@ -1,0 +1,32 @@
+{
+  "name": "autobridge/sdk-laravel",
+  "description": "AutoBridge SDK for Laravel — automatically wire your Laravel API to any frontend via the AutoBridge runtime framework",
+  "type": "library",
+  "license": "MIT",
+  "version": "0.1.0",
+  "require": {
+    "php": ">=8.1",
+    "ext-curl": "*",
+    "ext-json": "*"
+  },
+  "require-dev": {
+    "laravel/framework": "^10.0|^11.0",
+    "orchestra/testbench": "^8.0|^9.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "AutoBridge\\": "src/"
+    }
+  },
+  "extra": {
+    "laravel": {
+      "providers": [
+        "AutoBridge\\AutoBridgeServiceProvider"
+      ],
+      "aliases": {
+        "Bridge": "AutoBridge\\Facades\\Bridge"
+      }
+    }
+  },
+  "minimum-stability": "stable"
+}

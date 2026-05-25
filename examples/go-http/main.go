@@ -1,0 +1,118 @@
+// Example: Go backend with AutoBridge
+// Works with net/http, Gin, Echo, Chi, or any other Go HTTP framework.
+package main
+
+import (
+	"encoding/json"
+	"log"
+	"net/http"
+
+	autobridge "github.com/autobridge/sdk-go"
+)
+
+func main() {
+	// ─── Configure AutoBridge ───────────────────────────────────────────────
+	bridge := autobridge.New(autobridge.Config{
+		ServiceName: "inventory-service",
+		BaseURL:     "http://localhost:8080",
+		// APIKey: "sk-ant-...", // or set ANTHROPIC_API_KEY env var
+	})
+
+	// ─── Declare Capabilities ───────────────────────────────────────────────
+	bridge.
+		Capability(autobridge.Cap{
+			Name:    "list products",
+			Handler: "/api/products",
+			Method:  "GET",
+			Tags:    []string{"products", "read", "list", "inventory"},
+			Output: autobridge.Schema{
+				"products": autobridge.ArrayOf(autobridge.ObjectOf(autobridge.Fields{
+					"id":       autobridge.String(),
+					"name":     autobridge.String(),
+					"price":    autobridge.Number(),
+					"stock":    autobridge.Number(),
+					"category": autobridge.Optional(autobridge.String()),
+				})),
+				"total": autobridge.Number(),
+			},
+		}).
+		Capability(autobridge.Cap{
+			Name:        "get product by id",
+			Handler:     "/api/products/{id}",
+			Method:      "GET",
+			Description: "Fetch a single product with full details",
+			Tags:        []string{"products", "read", "detail"},
+			Input: autobridge.Schema{
+				"id": autobridge.String(),
+			},
+			Output: autobridge.Schema{
+				"product": autobridge.ObjectOf(autobridge.Fields{
+					"id":          autobridge.String(),
+					"name":        autobridge.String(),
+					"price":       autobridge.Number(),
+					"description": autobridge.Optional(autobridge.String()),
+					"stock":       autobridge.Number(),
+				}),
+			},
+		}).
+		Capability(autobridge.Cap{
+			Name:    "create product",
+			Handler: "/api/products",
+			Method:  "POST",
+			Tags:    []string{"products", "create", "write"},
+			Input: autobridge.Schema{
+				"name":  autobridge.String(),
+				"price": autobridge.Number(),
+				"stock": autobridge.Number(),
+			},
+			Output: autobridge.Schema{
+				"product": autobridge.ObjectOf(autobridge.Fields{
+					"id":    autobridge.String(),
+					"name":  autobridge.String(),
+					"price": autobridge.Number(),
+				}),
+			},
+		})
+
+	// ─── Register with AutoBridge ───────────────────────────────────────────
+	// MustRegister panics on failure — swap to Register() for graceful handling
+	bridge.MustRegister()
+	defer bridge.Stop()
+
+	// ─── HTTP Routes ────────────────────────────────────────────────────────
+	mux := http.NewServeMux()
+
+	mux.HandleFunc("GET /api/products", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"products": []map[string]interface{}{
+				{"id": "p1", "name": "Widget A", "price": 29.99, "stock": 150},
+				{"id": "p2", "name": "Widget B", "price": 49.99, "stock": 43},
+			},
+			"total": 2,
+		})
+	})
+
+	mux.HandleFunc("GET /api/products/{id}", func(w http.ResponseWriter, r *http.Request) {
+		id := r.PathValue("id")
+		w.Header().Set("Content-Type", "application/json")
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"product": map[string]interface{}{
+				"id": id, "name": "Widget A", "price": 29.99, "stock": 150,
+				"description": "A high-quality widget",
+			},
+		})
+	})
+
+	mux.HandleFunc("POST /api/products", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		w.WriteHeader(http.StatusCreated)
+		json.NewEncoder(w).Encode(map[string]interface{}{
+			"product": map[string]interface{}{"id": "p3", "name": "New Widget", "price": 9.99},
+		})
+	})
+
+	// Wrap with AutoBridge middleware (auto-registers on first request as backup)
+	log.Println("Inventory service listening on :8080")
+	log.Fatal(http.ListenAndServe(":8080", bridge.Middleware(mux)))
+}

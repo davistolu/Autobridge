@@ -1,0 +1,14 @@
+{
+  "name": "autobridge",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": ["core", "sdk-ts", "dashboard"],
+  "scripts": {
+    "dev": "concurrently \"npm run dev --workspace=dashboard\"",
+    "build": "npm run build --workspace=core && npm run build --workspace=sdk-ts && npm run build --workspace=dashboard",
+    "test": "npm run test --workspace=core"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.0"
+  }
+}

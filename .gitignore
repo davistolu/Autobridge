@@ -1,0 +1,86 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# Build outputs
+dist/
+build/
+.next/
+out/
+coverage/
+.cache/
+.temp/
+
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# IDE / Editor folders
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# TypeScript
+*.tsbuildinfo
+
+# Package managers
+.pnp/
+.pnp.js
+
+# Vercel
+.vercel/
+
+# Netlify
+.netlify/
+
+# Firebase
+.firebase/
+
+# Docker
+docker-compose.override.yml
+
+# Testing
+coverage/
+.nyc_output/
+
+# Misc
+*.local
+*.tmp
+*.bak
+
+# Python (if backend exists)
+__pycache__/
+*.py[cod]
+venv/
+.envrc
+
+# Flask
+instance/
+.webassets-cache
+
+# Database
+*.sqlite
+*.db
+
+# Mac/Linux hidden files
+.*.swp
