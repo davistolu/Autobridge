@@ -626,4 +626,4 @@ Convention contracts are resolved deterministically by the scoring engine — no
 
 ## License
 
-MIT
+Apache 2.0
