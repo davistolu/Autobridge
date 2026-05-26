@@ -2,7 +2,7 @@
   "name": "autobridge/sdk-laravel",
   "description": "AutoBridge SDK for Laravel — automatically wire your Laravel API to any frontend via the AutoBridge runtime framework",
   "type": "library",
-  "license": "MIT",
+  "license": "Apache 2.0",
   "version": "0.1.0",
   "require": {
     "php": ">=8.1",
