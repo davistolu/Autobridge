@@ -87,7 +87,7 @@ When a backend re-registers with changed capabilities, the drift detector compar
 ### 1. Start the bridge server
 
 ```bash
-git clone https://github.com/autobridge/autobridge
+git clone https://github.com/davistolu/Autobridge
 cd autobridge/core
 npm install
 npm run dev
