@@ -1,0 +1,100 @@
+name: Promote preview → main
+
+# Manually triggered — maintainer runs this when preview is ready to ship.
+# It runs the full CI suite one final time, then merges preview into main
+# and creates a GitHub release.
+#
+# Usage:
+#   GitHub UI → Actions → "Promote preview → main" → Run workflow
+#   Supply a version tag (e.g. v0.2.0) and optional release notes.
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version tag (e.g. v0.2.0)"
+        required: true
+      release_notes:
+        description: "Release notes (leave blank to auto-generate from commits)"
+        required: false
+
+jobs:
+  # ─── Run full CI before promoting ───────────────────────────────────────────
+  verify:
+    name: Verify preview is clean
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: preview
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Core type check
+        run: cd core && npm ci && npx tsc --noEmit
+
+      - name: Dashboard build
+        run: cd dashboard && npm ci && npx vite build
+
+      - name: Python SDK syntax
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - run: python3 -m py_compile sdk-python/wirebridge/__init__.py
+
+      - name: Name consistency check
+        run: |
+          FOUND=$(grep -rin "autobridge" \
+            --include="*.ts" --include="*.tsx" --include="*.jsx" \
+            --include="*.py" --include="*.go" --include="*.rb" \
+            --include="*.php" --include="*.md" --include="*.json" \
+            . | grep -v node_modules | grep -v dist | grep -v ".git" || true)
+          if [ -n "$FOUND" ]; then
+            echo "❌ Stale autobridge references found — fix before promoting"
+            echo "$FOUND"
+            exit 1
+          fi
+
+  # ─── Merge preview into main ─────────────────────────────────────────────────
+  promote:
+    name: Merge into main + tag release
+    needs: verify
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure git
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Merge preview into main
+        run: |
+          git fetch origin preview
+          git merge origin/preview --no-ff -m "chore: promote preview → main (${{ inputs.version }})"
+          git push origin main
+
+      - name: Tag the release
+        run: |
+          git tag ${{ inputs.version }} -m "Release ${{ inputs.version }}"
+          git push origin ${{ inputs.version }}
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ inputs.version }}
+          name: "${{ inputs.version }}"
+          body: ${{ inputs.release_notes || 'See commit history for changes in this release.' }}
+          target_commitish: main
+          draft: false
+          prerelease: false

@@ -2,6 +2,6 @@ module example/go-http
 
 go 1.21
 
-require github.com/autobridge/sdk-go v0.1.0
+require github.com/wirebridge/sdk-go v0.1.0
 
-replace github.com/autobridge/sdk-go => ../../sdk-go
+replace github.com/wirebridge/sdk-go => ../../sdk-go

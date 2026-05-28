@@ -113,7 +113,7 @@ export class LLMSynthesizer {
       output: Object.keys(cap.output || {}),
     }));
 
-    return `You are AutoBridge, a system that wires frontend intents to backend capabilities.
+    return `You are WireBridge, a system that wires frontend intents to backend capabilities.
 
 FRONTEND INTENT (what the frontend needs):
 ${JSON.stringify({

@@ -1,15 +1,15 @@
 <?php
 
-namespace AutoBridge;
+namespace WireBridge;
 
 /**
  * Schema helpers for describing capability input/output shapes.
  *
- * These produce the neutral AutoBridge manifest format that the
+ * These produce the neutral WireBridge manifest format that the
  * bridge uses for convention matching and LLM synthesis.
  *
  * Usage:
- *   use AutoBridge\Schema;
+ *   use WireBridge\Schema;
  *
  *   Schema::string()
  *   Schema::number(['description' => 'Price in cents'])

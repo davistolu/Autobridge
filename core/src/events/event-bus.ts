@@ -1,5 +1,5 @@
 /**
- * AutoBridge WebSocket Event Bus
+ * WireBridge WebSocket Event Bus
  * Pushes real-time events to the dashboard (and any other subscribers).
  *
  * Events emitted:

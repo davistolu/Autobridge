@@ -1,5 +1,5 @@
 /**
- * AutoBridge Manifest Format v1
+ * WireBridge Manifest Format v1
  * The neutral, stack-agnostic schema that all SDKs speak.
  * This is the contract language of the entire system.
  */

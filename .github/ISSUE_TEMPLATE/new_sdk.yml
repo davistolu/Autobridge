@@ -1,0 +1,41 @@
+name: New SDK request
+description: Request or track support for a new language or framework
+labels: ["sdk", "enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Use this to track adding WireBridge support for a new language or framework.
+        Check existing issues before opening — there may already be one for your language.
+
+  - type: input
+    id: language
+    attributes:
+      label: Language
+      placeholder: "e.g. Java, Rust, Elixir"
+    validations:
+      required: true
+
+  - type: input
+    id: framework
+    attributes:
+      label: Framework(s)
+      placeholder: "e.g. Spring Boot, Axum, Phoenix"
+    validations:
+      required: true
+
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Why is this useful?
+      description: Who would use this and what problem does it solve?
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: willing-to-contribute
+    attributes:
+      label: Are you willing to implement this?
+      options:
+        - label: Yes, I can build this SDK
+        - label: No, I'm requesting it

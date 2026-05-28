@@ -1,10 +1,10 @@
 # frozen_string_literal: true
 
-# AutoBridge Ruby SDK
+# WireBridge Ruby SDK
 # Works with Rails, Sinatra, Rack, or plain Ruby.
 #
 # Usage:
-#   bridge = AutoBridge::Client.new(
+#   bridge = WireBridge::Client.new(
 #     service_name: "payment-service",
 #     base_url: "http://localhost:3000"
 #   )
@@ -15,8 +15,8 @@
 #     method: "GET",
 #     tags: ["payments", "read"],
 #     output: {
-#       payments: AutoBridge.array_of(
-#         AutoBridge.object_of(id: AutoBridge.string, amount: AutoBridge.number)
+#       payments: WireBridge.array_of(
+#         WireBridge.object_of(id: WireBridge.string, amount: WireBridge.number)
 #       )
 #     }
 #   )
@@ -29,7 +29,7 @@ require "uri"
 require "securerandom"
 require "logger"
 
-module AutoBridge
+module WireBridge
   VERSION = "0.1.0"
 
   # ─── SCHEMA HELPERS ─────────────────────────────────────────────────────────
@@ -90,7 +90,7 @@ module AutoBridge
         bridge_url: bridge_url,
         service_id: service_id || "svc-#{SecureRandom.hex(4)}",
         version: version,
-        api_key: api_key || ENV["AUTOBRIDGE_ANTHROPIC_KEY"] || ENV["ANTHROPIC_API_KEY"],
+        api_key: api_key || ENV["WIREBRIDGE_ANTHROPIC_KEY"] || ENV["ANTHROPIC_API_KEY"],
         heartbeat_interval: heartbeat_interval
       }
       @capabilities = []
@@ -124,7 +124,7 @@ module AutoBridge
       self
     end
 
-    # Push the manifest to AutoBridge and start heartbeat.
+    # Push the manifest to WireBridge and start heartbeat.
     def register(api_key: nil)
       key = api_key || @config[:api_key]
       manifest = build_manifest
@@ -143,16 +143,16 @@ module AutoBridge
       response = http.request(request)
 
       if response.code.to_i >= 400
-        @logger.error("[AutoBridge] Registration failed: #{response.code} #{response.body}")
+        @logger.error("[WireBridge] Registration failed: #{response.code} #{response.body}")
         return false
       end
 
       @registered = true
-      @logger.info("[AutoBridge] ✓ Registered #{@capabilities.size} capabilities for '#{@config[:service_name]}'")
+      @logger.info("[WireBridge] ✓ Registered #{@capabilities.size} capabilities for '#{@config[:service_name]}'")
       start_heartbeat
       true
     rescue => e
-      @logger.error("[AutoBridge] Registration error: #{e.message}")
+      @logger.error("[WireBridge] Registration error: #{e.message}")
       false
     end
 
@@ -198,9 +198,9 @@ module AutoBridge
   # ─── RAILS INTEGRATION ──────────────────────────────────────────────────────
 
   module Rails
-    # Call in config/initializers/autobridge.rb
+    # Call in config/initializers/wirebridge.rb
     #
-    # AutoBridge::Rails.setup do |bridge|
+    # WireBridge::Rails.setup do |bridge|
     #   bridge.capability(name: "list users", handler: "/api/users", ...)
     # end
     def self.setup(bridge: nil, **opts, &block)
@@ -230,15 +230,15 @@ module AutoBridge
     # Mixin for Sinatra apps
     #
     # class MyApp < Sinatra::Base
-    #   include AutoBridge::Sinatra
-    #   autobridge service_name: "my-api", base_url: "http://localhost:4567"
+    #   include WireBridge::Sinatra
+    #   wirebridge service_name: "my-api", base_url: "http://localhost:4567"
     # end
     def self.included(base)
       base.extend(ClassMethods)
     end
 
     module ClassMethods
-      def autobridge(**opts, &block)
+      def wirebridge(**opts, &block)
         @_bridge = Client.new(**opts)
         yield @_bridge if block_given?
 
@@ -259,8 +259,8 @@ module AutoBridge
 
   # Rack middleware — registers capabilities on first request.
   #
-  # use AutoBridge::Middleware, service_name: "my-api", base_url: "http://localhost:9292" do |b|
-  #   b.capability(name: "health check", handler: "/health", output: { status: AutoBridge.string })
+  # use WireBridge::Middleware, service_name: "my-api", base_url: "http://localhost:9292" do |b|
+  #   b.capability(name: "health check", handler: "/health", output: { status: WireBridge.string })
   # end
   class Middleware
     def initialize(app, **opts, &block)

@@ -1,14 +1,14 @@
 """
-Example: Python Flask backend with AutoBridge
+Example: Python Flask backend with WireBridge
 Run: python app.py
 """
 
 from flask import Flask, jsonify
-from autobridge import BridgeClient, BridgeConfig, string_field, array_field, object_field, number_field
+from wirebridge import BridgeClient, BridgeConfig, string_field, array_field, object_field, number_field
 
 app = Flask(__name__)
 
-# ─── Configure AutoBridge ───────────────────────────────────────────────────
+# ─── Configure WireBridge ───────────────────────────────────────────────────
 bridge = BridgeClient(BridgeConfig(
     service_name="user-service",
     base_url="http://localhost:5000",
@@ -100,6 +100,6 @@ def _create_user():
 
 
 if __name__ == "__main__":
-    # Register with AutoBridge before starting Flask
+    # Register with WireBridge before starting Flask
     bridge.register()
     app.run(port=5000, debug=True)

@@ -1,29 +1,29 @@
-// Package autobridge provides AutoBridge SDK for Go backends.
+// Package wirebridge provides WireBridge SDK for Go backends.
 // Works with any HTTP framework: net/http, Gin, Echo, Chi, Fiber, etc.
 //
 // Usage:
 //
-//	bridge := autobridge.New(autobridge.Config{
+//	bridge := wirebridge.New(wirebridge.Config{
 //	    ServiceName: "order-service",
 //	    BaseURL:     "http://localhost:8080",
 //	})
 //
-//	bridge.Capability(autobridge.Cap{
+//	bridge.Capability(wirebridge.Cap{
 //	    Name:    "list orders",
 //	    Handler: "/api/orders",
 //	    Method:  "GET",
 //	    Tags:    []string{"orders", "read"},
-//	    Output: autobridge.Schema{
-//	        "orders": autobridge.ArrayOf(autobridge.ObjectOf(autobridge.Fields{
-//	            "id":     autobridge.String(),
-//	            "total":  autobridge.Number(),
-//	            "status": autobridge.String(),
+//	    Output: wirebridge.Schema{
+//	        "orders": wirebridge.ArrayOf(wirebridge.ObjectOf(wirebridge.Fields{
+//	            "id":     wirebridge.String(),
+//	            "total":  wirebridge.Number(),
+//	            "status": wirebridge.String(),
 //	        })),
 //	    },
 //	})
 //
 //	bridge.Register()
-package autobridge
+package wirebridge
 
 import (
 	"bytes"
@@ -41,7 +41,7 @@ import (
 // ─── SCHEMA TYPES ─────────────────────────────────────────────────────────────
 
 // FieldSchema represents the type definition of a field in a capability's
-// input or output. Mirrors the AutoBridge manifest format.
+// input or output. Mirrors the WireBridge manifest format.
 type FieldSchema struct {
 	Type        string                 `json:"type"`
 	Required    bool                   `json:"required"`
@@ -121,7 +121,7 @@ func applyOpts(f *FieldSchema, opts []map[string]interface{}) {
 
 // ─── CAPABILITY ───────────────────────────────────────────────────────────────
 
-// Cap defines a backend capability to register with AutoBridge.
+// Cap defines a backend capability to register with WireBridge.
 type Cap struct {
 	Name        string  // Human-readable name: "list orders", "create user"
 	Handler     string  // Route path: "/api/orders"
@@ -174,7 +174,7 @@ func (c *Config) defaults() {
 
 // ─── CLIENT ───────────────────────────────────────────────────────────────────
 
-// Client is the AutoBridge Go SDK client.
+// Client is the WireBridge Go SDK client.
 type Client struct {
 	config       Config
 	capabilities []capability
@@ -183,7 +183,7 @@ type Client struct {
 	stopHB       chan struct{}
 }
 
-// New creates a new AutoBridge client.
+// New creates a new WireBridge client.
 func New(cfg Config) *Client {
 	cfg.defaults()
 	return &Client{
@@ -192,7 +192,7 @@ func New(cfg Config) *Client {
 	}
 }
 
-// Capability registers a backend capability with AutoBridge.
+// Capability registers a backend capability with WireBridge.
 // Call this before Register().
 func (c *Client) Capability(cap Cap) *Client {
 	c.mu.Lock()
@@ -220,7 +220,7 @@ func (c *Client) Capability(cap Cap) *Client {
 	return c
 }
 
-// Register pushes the service manifest to the AutoBridge bridge server.
+// Register pushes the service manifest to the WireBridge bridge server.
 // It then starts a background heartbeat goroutine to keep the service alive.
 func (c *Client) Register() error {
 	return c.RegisterWithKey("")
@@ -236,7 +236,7 @@ func (c *Client) RegisterWithKey(apiKey string) error {
 		key = c.config.APIKey
 	}
 	if key == "" {
-		key = os.Getenv("AUTOBRIDGE_ANTHROPIC_KEY")
+		key = os.Getenv("WIREBRIDGE_ANTHROPIC_KEY")
 	}
 	if key == "" {
 		key = os.Getenv("ANTHROPIC_API_KEY")
@@ -252,7 +252,7 @@ func (c *Client) RegisterWithKey(apiKey string) error {
 
 	body, err := json.Marshal(payload)
 	if err != nil {
-		return fmt.Errorf("autobridge: marshal manifest: %w", err)
+		return fmt.Errorf("wirebridge: marshal manifest: %w", err)
 	}
 
 	resp, err := http.Post(
@@ -261,17 +261,17 @@ func (c *Client) RegisterWithKey(apiKey string) error {
 		bytes.NewReader(body),
 	)
 	if err != nil {
-		return fmt.Errorf("autobridge: register request: %w", err)
+		return fmt.Errorf("wirebridge: register request: %w", err)
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode >= 400 {
 		b, _ := io.ReadAll(resp.Body)
-		return fmt.Errorf("autobridge: bridge returned %d: %s", resp.StatusCode, string(b))
+		return fmt.Errorf("wirebridge: bridge returned %d: %s", resp.StatusCode, string(b))
 	}
 
 	c.registered = true
-	log.Printf("[AutoBridge] ✓ Registered %d capabilities for '%s'",
+	log.Printf("[WireBridge] ✓ Registered %d capabilities for '%s'",
 		len(c.capabilities), c.config.ServiceName)
 
 	go c.heartbeatLoop()
@@ -281,7 +281,7 @@ func (c *Client) RegisterWithKey(apiKey string) error {
 // MustRegister calls Register and panics on failure. Useful in main().
 func (c *Client) MustRegister() {
 	if err := c.Register(); err != nil {
-		panic(fmt.Sprintf("autobridge: registration failed: %v", err))
+		panic(fmt.Sprintf("wirebridge: registration failed: %v", err))
 	}
 }
 
@@ -374,7 +374,7 @@ func (c *Client) Middleware(next http.Handler) http.Handler {
 		once.Do(func() {
 			if !c.registered {
 				if err := c.Register(); err != nil {
-					log.Printf("[AutoBridge] Auto-registration failed: %v", err)
+					log.Printf("[WireBridge] Auto-registration failed: %v", err)
 				}
 			}
 		})
