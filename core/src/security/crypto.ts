@@ -12,8 +12,8 @@ const IV_LENGTH = 16;
 const TAG_LENGTH = 16;
 
 function getDerivedKey(): Buffer {
-  const secret = process.env.AUTOBRIDGE_ENCRYPTION_SECRET || 'autobridge-dev-secret-change-in-prod';
-  return crypto.scryptSync(secret, 'autobridge-salt', KEY_LENGTH);
+  const secret = process.env.WIREBRIDGE_ENCRYPTION_SECRET || 'wirebridge-dev-secret-change-in-prod';
+  return crypto.scryptSync(secret, 'wirebridge-salt', KEY_LENGTH);
 }
 
 export function encrypt(plaintext: string): { encrypted: string; id: string } {

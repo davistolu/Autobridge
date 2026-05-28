@@ -1,36 +1,36 @@
 <?php
 
-namespace AutoBridge\Support;
+namespace WireBridge\Support;
 
 use Illuminate\Console\Command;
-use AutoBridge\BridgeClient;
+use WireBridge\BridgeClient;
 
 /**
- * Artisan command for re-registering with AutoBridge.
+ * Artisan command for re-registering with WireBridge.
  * Useful in deployments, CI/CD pipelines, or as a scheduled task.
  *
  * Usage:
- *   php artisan autobridge:register
+ *   php artisan wirebridge:register
  *
  * Schedule in app/Console/Kernel.php:
- *   $schedule->command('autobridge:register')->everyThirtySeconds();
+ *   $schedule->command('wirebridge:register')->everyThirtySeconds();
  */
 class RegisterCommand extends Command
 {
-    protected $signature   = 'autobridge:register {--force : Force re-registration even if already registered}';
-    protected $description = 'Register this Laravel service with the AutoBridge bridge server';
+    protected $signature   = 'wirebridge:register {--force : Force re-registration even if already registered}';
+    protected $description = 'Register this Laravel service with the WireBridge bridge server';
 
     public function handle(BridgeClient $bridge): int
     {
-        $this->info('[AutoBridge] Registering with bridge server...');
+        $this->info('[WireBridge] Registering with bridge server...');
 
         $success = $bridge->register();
 
         if ($success) {
-            $this->info('[AutoBridge] ✓ Registration successful');
+            $this->info('[WireBridge] ✓ Registration successful');
             return Command::SUCCESS;
         } else {
-            $this->error('[AutoBridge] ✗ Registration failed — is the bridge server running?');
+            $this->error('[WireBridge] ✗ Registration failed — is the bridge server running?');
             return Command::FAILURE;
         }
     }

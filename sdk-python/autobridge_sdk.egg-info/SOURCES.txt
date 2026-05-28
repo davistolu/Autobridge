@@ -1,0 +1,8 @@
+pyproject.toml
+setup.py
+autobridge/__init__.py
+autobridge_sdk.egg-info/PKG-INFO
+autobridge_sdk.egg-info/SOURCES.txt
+autobridge_sdk.egg-info/dependency_links.txt
+autobridge_sdk.egg-info/requires.txt
+autobridge_sdk.egg-info/top_level.txt

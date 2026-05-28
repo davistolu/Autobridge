@@ -1,5 +1,5 @@
 """
-AutoBridge Python SDK
+WireBridge Python SDK
 Stack-agnostic capability registration for Python backends.
 Works with Flask, FastAPI, Django, Bottle, or plain Python.
 """
@@ -21,7 +21,7 @@ try:
 except ImportError:
     requests = None  # type: ignore
 
-logger = logging.getLogger("autobridge")
+logger = logging.getLogger("wirebridge")
 
 F = TypeVar("F", bound=Callable[..., Any])
 
@@ -96,7 +96,7 @@ class BridgeConfig:
 
 class BridgeClient:
     """
-    The main AutoBridge client for Python backends.
+    The main WireBridge client for Python backends.
 
     Usage:
         bridge = BridgeClient(BridgeConfig(
@@ -118,7 +118,7 @@ class BridgeClient:
 
         if requests is None:
             raise ImportError(
-                "AutoBridge requires the 'requests' library. "
+                "WireBridge requires the 'requests' library. "
                 "Install it with: pip install requests"
             )
 
@@ -161,20 +161,20 @@ class BridgeClient:
                 stack=self.config.stack,
             )
             self._capabilities.append(cap)
-            logger.debug(f"[AutoBridge] Capability registered: {name}")
+            logger.debug(f"[WireBridge] Capability registered: {name}")
 
             @wraps(fn)
             def wrapper(*args, **kwargs):
                 return fn(*args, **kwargs)
 
             # Attach metadata to the function for introspection
-            wrapper._autobridge_capability = cap  # type: ignore
+            wrapper._wirebridge_capability = cap  # type: ignore
             return wrapper  # type: ignore
 
         return decorator
 
     def register(self, api_key: Optional[str] = None) -> bool:
-        """Push the manifest to the AutoBridge bridge server."""
+        """Push the manifest to the WireBridge bridge server."""
         key = api_key or self.config.api_key
         manifest = self._build_manifest()
 
@@ -187,13 +187,13 @@ class BridgeClient:
             resp.raise_for_status()
             self._registered = True
             logger.info(
-                f"[AutoBridge] Registered {len(self._capabilities)} capabilities "
+                f"[WireBridge] Registered {len(self._capabilities)} capabilities "
                 f"for service '{self.config.service_name}'"
             )
             self._start_heartbeat()
             return True
         except Exception as e:
-            logger.error(f"[AutoBridge] Registration failed: {e}")
+            logger.error(f"[WireBridge] Registration failed: {e}")
             return False
 
     def _build_manifest(self) -> dict:
@@ -236,7 +236,7 @@ class BridgeClient:
                     pass  # Heartbeat failures are silent
 
         self._heartbeat_thread = threading.Thread(
-            target=heartbeat_loop, daemon=True, name="autobridge-heartbeat"
+            target=heartbeat_loop, daemon=True, name="wirebridge-heartbeat"
         )
         self._heartbeat_thread.start()
 
@@ -252,7 +252,7 @@ def flask_integration(app, bridge: BridgeClient):
     automatically call bridge.register() on app startup.
 
     Usage:
-        from autobridge import BridgeClient, flask_integration
+        from wirebridge import BridgeClient, flask_integration
         bridge = BridgeClient(...)
         flask_integration(app, bridge)
     """
@@ -262,7 +262,7 @@ def flask_integration(app, bridge: BridgeClient):
         raise ImportError("Flask is required for flask_integration")
 
     @app.before_request
-    def _autobridge_init():
+    def _wirebridge_init():
         # Only runs once
         if not bridge._registered:
             bridge.register()
@@ -274,10 +274,10 @@ def flask_integration(app, bridge: BridgeClient):
 
 def fastapi_integration(app, bridge: BridgeClient):
     """
-    Auto-register with AutoBridge on FastAPI startup.
+    Auto-register with WireBridge on FastAPI startup.
 
     Usage:
-        from autobridge import BridgeClient, fastapi_integration
+        from wirebridge import BridgeClient, fastapi_integration
         bridge = BridgeClient(...)
         fastapi_integration(app, bridge)
     """
@@ -287,11 +287,11 @@ def fastapi_integration(app, bridge: BridgeClient):
         raise ImportError("FastAPI is required for fastapi_integration")
 
     @app.on_event("startup")
-    async def _autobridge_startup():
+    async def _wirebridge_startup():
         bridge.register()
 
     @app.on_event("shutdown")
-    async def _autobridge_shutdown():
+    async def _wirebridge_shutdown():
         bridge.stop()
 
     return bridge

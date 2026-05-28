@@ -1,7 +1,7 @@
 {
-  "name": "@autobridge/sdk",
+  "name": "@wirebridge/sdk",
   "version": "0.1.0",
-  "description": "AutoBridge TypeScript SDK",
+  "description": "WireBridge TypeScript SDK",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [

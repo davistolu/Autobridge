@@ -6,10 +6,10 @@ return [
     |--------------------------------------------------------------------------
     | Bridge Server URL
     |--------------------------------------------------------------------------
-    | The URL where the AutoBridge core server is running.
-    | Override with AUTOBRIDGE_BRIDGE_URL environment variable.
+    | The URL where the WireBridge core server is running.
+    | Override with WIREBRIDGE_BRIDGE_URL environment variable.
     */
-    'bridge_url' => env('AUTOBRIDGE_BRIDGE_URL', 'http://localhost:7331'),
+    'bridge_url' => env('WIREBRIDGE_BRIDGE_URL', 'http://localhost:7331'),
 
     /*
     |--------------------------------------------------------------------------
@@ -19,9 +19,9 @@ return [
     | auto-generated if not set — set it explicitly in production so
     | contracts survive restarts.
     */
-    'service_id'   => env('AUTOBRIDGE_SERVICE_ID'),
-    'service_name' => env('AUTOBRIDGE_SERVICE_NAME', env('APP_NAME', 'laravel-service')),
-    'version'      => env('AUTOBRIDGE_VERSION', '1.0.0'),
+    'service_id'   => env('WIREBRIDGE_SERVICE_ID'),
+    'service_name' => env('WIREBRIDGE_SERVICE_NAME', env('APP_NAME', 'laravel-service')),
+    'version'      => env('WIREBRIDGE_VERSION', '1.0.0'),
     'base_url'     => env('APP_URL', 'http://localhost:8000'),
     'stack'        => 'php-laravel',
 
@@ -30,9 +30,9 @@ return [
     | Claude API Key
     |--------------------------------------------------------------------------
     | Used for LLM synthesis when convention matching fails.
-    | Resolved in order: this value → AUTOBRIDGE_ANTHROPIC_KEY → ANTHROPIC_API_KEY
+    | Resolved in order: this value → WIREBRIDGE_ANTHROPIC_KEY → ANTHROPIC_API_KEY
     */
-    'api_key' => env('AUTOBRIDGE_ANTHROPIC_KEY', env('ANTHROPIC_API_KEY')),
+    'api_key' => env('WIREBRIDGE_ANTHROPIC_KEY', env('ANTHROPIC_API_KEY')),
 
     /*
     |--------------------------------------------------------------------------
@@ -42,7 +42,7 @@ return [
     | Set to false if you want to control registration timing manually
     | (e.g. in an AppServiceProvider or via artisan command).
     */
-    'auto_register' => env('AUTOBRIDGE_AUTO_REGISTER', true),
+    'auto_register' => env('WIREBRIDGE_AUTO_REGISTER', true),
 
     /*
     |--------------------------------------------------------------------------
@@ -51,6 +51,6 @@ return [
     | How often (in seconds) to notify the bridge server this service is alive.
     | Set lower for faster offline detection; higher for less network chatter.
     */
-    'heartbeat_interval' => env('AUTOBRIDGE_HEARTBEAT_INTERVAL', 30),
+    'heartbeat_interval' => env('WIREBRIDGE_HEARTBEAT_INTERVAL', 30),
 
 ];

@@ -54,7 +54,7 @@ export class ProxyLayer {
       return {
         status: 503,
         error: 'Contract pending approval',
-        detail: 'This connection was synthesized by LLM and requires manual approval in the AutoBridge dashboard.',
+        detail: 'This connection was synthesized by LLM and requires manual approval in the WireBridge dashboard.',
       };
     }
 
@@ -88,7 +88,7 @@ export class ProxyLayer {
         forwardBody = transformed.body ?? forwardBody;
         forwardQuery = transformed.query ?? forwardQuery;
       } catch (e) {
-        console.warn('[AutoBridge] Request transform failed, using raw params:', e);
+        console.warn('[WireBridge] Request transform failed, using raw params:', e);
       }
     }
 
@@ -130,7 +130,7 @@ export class ProxyLayer {
         const transformFn = new Function('data', `return (${contract.transforms.response})(data)`);
         responseBody = transformFn(responseBody);
       } catch (e) {
-        console.warn('[AutoBridge] Response transform failed, using raw response:', e);
+        console.warn('[WireBridge] Response transform failed, using raw response:', e);
       }
     }
 
@@ -143,9 +143,9 @@ export class ProxyLayer {
       status: backendResponse.status,
       headers: {
         'Content-Type': 'application/json',
-        'X-AutoBridge-Contract': contract.id,
-        'X-AutoBridge-Source': contract.source,
-        'X-AutoBridge-Duration': String(durationMs),
+        'X-WireBridge-Contract': contract.id,
+        'X-WireBridge-Source': contract.source,
+        'X-WireBridge-Duration': String(durationMs),
       },
       body: responseBody,
       contract,
@@ -171,7 +171,7 @@ export class ProxyLayer {
   }
 
   private filterHeaders(headers: Record<string, string>): Record<string, string> {
-    // Pass through auth headers but strip AutoBridge-specific ones
+    // Pass through auth headers but strip WireBridge-specific ones
     const filtered: Record<string, string> = {};
     const PASSTHROUGH = ['authorization', 'x-api-key', 'x-request-id', 'accept-language'];
     

@@ -1,5 +1,5 @@
 /**
- * AutoBridge TypeScript SDK
+ * WireBridge TypeScript SDK
  * For both Node.js backends (Express, Fastify, etc.)
  * and frontend frameworks (React, Vue, Svelte, Next.js).
  */
@@ -109,10 +109,10 @@ export class BackendBridge {
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       this.registered = true;
       this.startHeartbeat();
-      console.log(`[AutoBridge] ✓ Registered ${this.capabilities.length} capabilities`);
+      console.log(`[WireBridge] ✓ Registered ${this.capabilities.length} capabilities`);
       return true;
     } catch (err) {
-      console.error(`[AutoBridge] Registration failed:`, err);
+      console.error(`[WireBridge] Registration failed:`, err);
       return false;
     }
   }
@@ -265,7 +265,7 @@ export class FrontendBridge {
       }
 
       this.registered = true;
-      console.log(`[AutoBridge] ✓ ${data.contractsResolved} intents resolved, ${data.contractsPending} pending`);
+      console.log(`[WireBridge] ✓ ${data.contractsResolved} intents resolved, ${data.contractsPending} pending`);
 
       return {
         resolved: data.contractsResolved,
@@ -273,7 +273,7 @@ export class FrontendBridge {
         endpoints,
       };
     } catch (err) {
-      console.error(`[AutoBridge] Frontend registration failed:`, err);
+      console.error(`[WireBridge] Frontend registration failed:`, err);
       return { resolved: 0, pending: 0, endpoints: {} };
     }
   }
@@ -313,7 +313,7 @@ export class FrontendBridge {
     const endpoint = this.getEndpoint(intentName);
     if (!endpoint) {
       throw new Error(
-        `[AutoBridge] Intent "${intentName}" is not yet resolved. ` +
+        `[WireBridge] Intent "${intentName}" is not yet resolved. ` +
         `Call bridge.register() first or check the dashboard for pending approvals.`
       );
     }
@@ -339,7 +339,7 @@ export function createUseBridge(bridge: FrontendBridge) {
     // to avoid a hard React dependency in the SDK
     throw new Error(
       'useBridge must be used inside a React component. ' +
-      'Import from @autobridge/react instead.'
+      'Import from @wirebridge/react instead.'
     );
   };
 }

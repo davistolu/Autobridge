@@ -22,7 +22,7 @@ export class ContractStore {
   private initialized = false;
 
   constructor(dbPath?: string) {
-    this.dbPath = dbPath || path.join(process.cwd(), '.autobridge', 'bridge.db');
+    this.dbPath = dbPath || path.join(process.cwd(), '.wirebridge', 'bridge.db');
     const dir = path.dirname(this.dbPath);
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
   }

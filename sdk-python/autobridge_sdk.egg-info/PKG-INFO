@@ -1,0 +1,14 @@
+Metadata-Version: 2.4
+Name: autobridge-sdk
+Version: 0.1.0
+Summary: AutoBridge Python SDK — connect any Python backend to the AutoBridge framework
+Requires-Python: >=3.9
+Requires-Dist: requests>=2.28.0
+Provides-Extra: flask
+Requires-Dist: Flask>=2.0; extra == "flask"
+Provides-Extra: fastapi
+Requires-Dist: fastapi>=0.100.0; extra == "fastapi"
+Dynamic: provides-extra
+Dynamic: requires-dist
+Dynamic: requires-python
+Dynamic: summary

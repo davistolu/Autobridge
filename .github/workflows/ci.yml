@@ -1,0 +1,103 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - preview        # All PRs must target preview
+  push:
+    branches:
+      - preview        # Run checks on every push to preview too
+
+jobs:
+  # ─── Core TypeScript ────────────────────────────────────────────────────────
+  core:
+    name: Core (TypeScript)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: core/package-lock.json
+
+      - name: Install core dependencies
+        run: cd core && npm ci
+
+      - name: Type check
+        run: cd core && npx tsc --noEmit
+
+  # ─── Dashboard ──────────────────────────────────────────────────────────────
+  dashboard:
+    name: Dashboard (React)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: dashboard/package-lock.json
+
+      - name: Install dashboard dependencies
+        run: cd dashboard && npm ci
+
+      - name: Build dashboard
+        run: cd dashboard && npx vite build
+
+  # ─── Python SDK ─────────────────────────────────────────────────────────────
+  sdk-python:
+    name: SDK — Python
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Syntax check
+        run: |
+          python3 -m py_compile sdk-python/wirebridge/__init__.py
+          python3 -m py_compile examples/python-flask/app.py
+          echo "✓ Python SDK syntax clean"
+
+  # ─── Name consistency check ─────────────────────────────────────────────────
+  name-check:
+    name: No stale autobridge references
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check for autobridge references
+        run: |
+          FOUND=$(grep -rin "autobridge" \
+            --include="*.ts" --include="*.tsx" --include="*.jsx" \
+            --include="*.py" --include="*.go" --include="*.rb" \
+            --include="*.php" --include="*.md" --include="*.json" \
+            . | grep -v node_modules | grep -v dist | grep -v ".git" || true)
+
+          if [ -n "$FOUND" ]; then
+            echo "❌ Found stale 'autobridge' references:"
+            echo "$FOUND"
+            exit 1
+          else
+            echo "✓ No stale autobridge references found"
+          fi
+
+  # ─── PR branch target guard ─────────────────────────────────────────────────
+  target-branch:
+    name: PR targets preview
+    runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
+    steps:
+      - name: Check base branch
+        run: |
+          if [ "${{ github.base_ref }}" = "main" ]; then
+            echo "❌ PRs must target the 'preview' branch, not 'main'."
+            echo "   Please update your PR's base branch to 'preview'."
+            exit 1
+          fi
+          echo "✓ Base branch is '${{ github.base_ref }}'"

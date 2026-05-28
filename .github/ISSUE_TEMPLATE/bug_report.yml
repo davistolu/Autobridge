@@ -1,0 +1,66 @@
+name: Bug report
+description: Something isn't working
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. Fill in as much as you can — the more detail, the faster it gets fixed.
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: What did you expect, and what happened instead?
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to reproduce
+      description: Minimal steps to reproduce the issue.
+      placeholder: |
+        1. Register backend with capability X
+        2. Register frontend with intent Y
+        3. See error Z
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Bridge server output
+      description: Paste relevant logs from `npm run dev` in the core/ directory.
+      render: shell
+
+  - type: dropdown
+    id: sdk
+    attributes:
+      label: Which SDK?
+      options:
+        - Python
+        - TypeScript/JS
+        - Go
+        - Ruby
+        - Laravel/PHP
+        - Core bridge only
+        - Dashboard
+    validations:
+      required: true
+
+  - type: input
+    id: node-version
+    attributes:
+      label: Node.js version
+      placeholder: "e.g. 20.11.0"
+    validations:
+      required: true
+
+  - type: input
+    id: os
+    attributes:
+      label: OS
+      placeholder: "e.g. macOS 14, Ubuntu 22.04, Windows 11"
+    validations:
+      required: true

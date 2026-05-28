@@ -1,15 +1,15 @@
 <?php
 
-namespace AutoBridge;
+namespace WireBridge;
 
 /**
- * AutoBridge Laravel SDK
+ * WireBridge Laravel SDK
  *
- * Registers your Laravel backend's capabilities with the AutoBridge
+ * Registers your Laravel backend's capabilities with the WireBridge
  * bridge server so the frontend can wire to them automatically.
  *
  * Usage:
- *   use AutoBridge\BridgeClient;
+ *   use WireBridge\BridgeClient;
  *
  *   $bridge = new BridgeClient([
  *       'service_name' => 'my-laravel-api',
@@ -38,12 +38,12 @@ class BridgeClient
     public function __construct(array $config = [])
     {
         $this->config = array_merge([
-            'bridge_url'         => env('AUTOBRIDGE_BRIDGE_URL', 'http://localhost:7331'),
+            'bridge_url'         => env('WIREBRIDGE_BRIDGE_URL', 'http://localhost:7331'),
             'service_id'         => null,
             'service_name'       => env('APP_NAME', 'laravel-service'),
             'version'            => '1.0.0',
             'base_url'           => env('APP_URL', 'http://localhost:8000'),
-            'api_key'            => env('AUTOBRIDGE_ANTHROPIC_KEY', env('ANTHROPIC_API_KEY')),
+            'api_key'            => env('WIREBRIDGE_ANTHROPIC_KEY', env('ANTHROPIC_API_KEY')),
             'heartbeat_interval' => 30,
             'stack'              => 'php-laravel',
         ], $config);
@@ -80,7 +80,7 @@ class BridgeClient
     }
 
     /**
-     * Push the service manifest to the AutoBridge bridge server
+     * Push the service manifest to the WireBridge bridge server
      * and start the background heartbeat.
      */
     public function register(?string $apiKey = null): bool
@@ -109,18 +109,18 @@ class BridgeClient
             curl_close($ch);
 
             if ($httpCode >= 400) {
-                error_log("[AutoBridge] Registration failed: HTTP {$httpCode} — {$response}");
+                error_log("[WireBridge] Registration failed: HTTP {$httpCode} — {$response}");
                 return false;
             }
 
             $this->registered = true;
-            error_log("[AutoBridge] ✓ Registered " . count($this->capabilities) . " capabilities for '{$this->config['service_name']}'");
+            error_log("[WireBridge] ✓ Registered " . count($this->capabilities) . " capabilities for '{$this->config['service_name']}'");
 
             $this->startHeartbeat();
             return true;
 
         } catch (\Throwable $e) {
-            error_log("[AutoBridge] Registration error: " . $e->getMessage());
+            error_log("[WireBridge] Registration error: " . $e->getMessage());
             return false;
         }
     }
@@ -149,7 +149,7 @@ class BridgeClient
         $serviceId = $this->config['service_id'];
 
         // Schedule via shutdown function (works without a queue)
-        // For production, use AutoBridgeHeartbeatJob (see docs)
+        // For production, use WireBridgeHeartbeatJob (see docs)
         register_shutdown_function(function () use ($bridgeUrl, $serviceId) {
             $this->sendHeartbeat($bridgeUrl, $serviceId);
         });
