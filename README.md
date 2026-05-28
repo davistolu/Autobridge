@@ -1,8 +1,8 @@
-# AutoBridge
+# WireBridge
 
 **The runtime layer that wires your frontend to your backend — automatically.**
 
-AutoBridge eliminates the manual work of connecting frontend components to backend APIs. Instead of writing endpoints, route handlers, and fetch calls by hand for every feature, you declare what your backend *can do* and what your frontend *needs* — AutoBridge figures out the rest at runtime.
+WireBridge eliminates the manual work of connecting frontend components to backend APIs. Instead of writing endpoints, route handlers, and fetch calls by hand for every feature, you declare what your backend *can do* and what your frontend *needs* — WireBridge figures out the rest at runtime.
 
 No code generation. No build step. No schemas to sync. It just works while your servers are running.
 
@@ -20,9 +20,9 @@ Building a new feature today looks like this:
 
 Every new feature repeats this cycle. The more features, the more coordination overhead, the more drift between what the backend actually returns and what the frontend expects.
 
-**AutoBridge replaces this entire loop.**
+**WireBridge replaces this entire loop.**
 
-Your backend declares its capabilities once. Your frontend declares its needs once. AutoBridge resolves the connection using convention matching (instant, free) or Claude as a fallback (once per novel pairing, then cached forever). The bridge proxies requests at runtime — no client-side URL management, no manual route wiring, no sync meetings.
+Your backend declares its capabilities once. Your frontend declares its needs once. WireBridge resolves the connection using convention matching (instant, free) or Claude as a fallback (once per novel pairing, then cached forever). The bridge proxies requests at runtime — no client-side URL management, no manual route wiring, no sync meetings.
 
 ---
 
@@ -30,7 +30,7 @@ Your backend declares its capabilities once. Your frontend declares its needs on
 
 ```
 ┌──────────────────────────────────────────────────────────────────────┐
-│                          AUTOBRIDGE CORE                             │
+│                          WIREBRIDGE CORE                             │
 │                                                                      │
 │   Backend Registry              Frontend Registry                    │
 │   "I can do these things"  ←→  "I need these things"                │
@@ -87,8 +87,8 @@ When a backend re-registers with changed capabilities, the drift detector compar
 ### 1. Start the bridge server
 
 ```bash
-git clone https://github.com/davistolu/Autobridge
-cd autobridge/core
+git clone https://github.com/davistolu/wirebridge
+cd wirebridge/core
 npm install
 npm run dev
 ```
@@ -96,7 +96,7 @@ npm run dev
 The bridge starts on `http://localhost:7331`. You'll see:
 
 ```
-🌉 AutoBridge running on http://localhost:7331
+🌉 WireBridge running on http://localhost:7331
 ```
 
 ### 2. Set your API key (optional but recommended)
@@ -105,7 +105,7 @@ The bridge starts on `http://localhost:7331`. You'll see:
 export ANTHROPIC_API_KEY=sk-ant-...
 ```
 
-Without a key, AutoBridge runs in convention-only mode. This works well once you have established conventions, but the LLM covers the gaps on novel pairings.
+Without a key, WireBridge runs in convention-only mode. This works well once you have established conventions, but the LLM covers the gaps on novel pairings.
 
 ### 3. Register your backend
 
@@ -114,9 +114,9 @@ Pick your stack:
 **Python (Flask / FastAPI / Django / Bottle)**
 
 ```python
-pip install autobridge-sdk
+pip install wirebridge-sdk
 
-from autobridge import BridgeClient, BridgeConfig, string_field, array_field, object_field, number_field
+from wirebridge import BridgeClient, BridgeConfig, string_field, array_field, object_field, number_field
 
 bridge = BridgeClient(BridgeConfig(
     service_name="user-service",
@@ -146,7 +146,7 @@ bridge.register()
 **TypeScript / Node.js (Express / Fastify / Next.js)**
 
 ```typescript
-import { BackendBridge, s } from '@autobridge/sdk';
+import { BackendBridge, s } from '@wirebridge/sdk';
 
 const bridge = new BackendBridge({
     serviceName: 'user-service',
@@ -174,23 +174,23 @@ await bridge.register();
 **Go (net/http / Gin / Echo / Chi / Fiber)**
 
 ```go
-import autobridge "github.com/autobridge/sdk-go"
+import wirebridge "github.com/wirebridge/sdk-go"
 
-bridge := autobridge.New(autobridge.Config{
+bridge := wirebridge.New(wirebridge.Config{
     ServiceName: "user-service",
     BaseURL:     "http://localhost:8080",
 })
 
-bridge.Capability(autobridge.Cap{
+bridge.Capability(wirebridge.Cap{
     Name:    "list users",
     Handler: "/api/users",
     Method:  "GET",
     Tags:    []string{"users", "read", "list"},
-    Output: autobridge.Schema{
-        "users": autobridge.ArrayOf(autobridge.ObjectOf(autobridge.Fields{
-            "id":    autobridge.Number(),
-            "name":  autobridge.String(),
-            "email": autobridge.String(),
+    Output: wirebridge.Schema{
+        "users": wirebridge.ArrayOf(wirebridge.ObjectOf(wirebridge.Fields{
+            "id":    wirebridge.Number(),
+            "name":  wirebridge.String(),
+            "email": wirebridge.String(),
         })),
     },
 })
@@ -202,10 +202,10 @@ defer bridge.Stop()
 **Ruby (Rails / Sinatra / Rack)**
 
 ```ruby
-# config/initializers/autobridge.rb
-require "autobridge"
+# config/initializers/wirebridge.rb
+require "wirebridge"
 
-AutoBridge::Rails.setup(
+WireBridge::Rails.setup(
     service_name: "user-service",
     base_url: Rails.application.routes.url_helpers.root_url,
 ) do |bridge|
@@ -215,10 +215,10 @@ AutoBridge::Rails.setup(
         method:  "GET",
         tags:    %w[users read list],
         output:  {
-            users: AutoBridge.array_of(AutoBridge.object_of(
-                id:    AutoBridge.number,
-                name:  AutoBridge.string,
-                email: AutoBridge.string,
+            users: WireBridge.array_of(WireBridge.object_of(
+                id:    WireBridge.number,
+                name:  WireBridge.string,
+                email: WireBridge.string,
             ))
         }
     )
@@ -228,14 +228,14 @@ end
 **PHP / Laravel**
 
 ```bash
-composer require autobridge/sdk-laravel
-php artisan vendor:publish --tag=autobridge-config
+composer require wirebridge/sdk-laravel
+php artisan vendor:publish --tag=wirebridge-config
 ```
 
 ```php
 // app/Providers/AppServiceProvider.php
-use AutoBridge\BridgeClient;
-use AutoBridge\Schema;
+use WireBridge\BridgeClient;
+use WireBridge\Schema;
 
 $bridge = new BridgeClient([
     'service_name' => 'user-service',
@@ -261,7 +261,7 @@ $bridge
 Or use the Facade:
 
 ```php
-use AutoBridge\Facades\Bridge;
+use WireBridge\Facades\Bridge;
 
 Bridge::capability('list users', [...])
       ->capability('create user', [...])
@@ -273,7 +273,7 @@ Bridge::capability('list users', [...])
 **React / Next.js / Vue / Any JS framework**
 
 ```typescript
-import { FrontendBridge } from '@autobridge/sdk';
+import { FrontendBridge } from '@wirebridge/sdk';
 
 const bridge = new FrontendBridge({
     appName: 'my-app',
@@ -283,7 +283,7 @@ const bridge = new FrontendBridge({
 // Register on startup — resolves all intents against registered backends
 await bridge.register();
 
-// Declare what you need — AutoBridge finds the endpoint
+// Declare what you need — WireBridge finds the endpoint
 const endpoint = bridge.intent('list users with name and email', {
     requiredFields: ['name', 'email'],
     action: 'read',
@@ -325,7 +325,7 @@ The dashboard shows:
 ```typescript
 export default {
     port: 7331,
-    dbPath: '.autobridge/bridge.db',   // SQLite for dev; use PG connection string for prod
+    dbPath: '.wirebridge/bridge.db',   // SQLite for dev; use PG connection string for prod
 
     // Claude API key — see key resolution order below
     llmApiKey: process.env.ANTHROPIC_API_KEY,
@@ -339,13 +339,13 @@ export default {
 
 ### API key resolution order
 
-AutoBridge resolves the Claude API key in this order, using the first one found:
+WireBridge resolves the Claude API key in this order, using the first one found:
 
 | Priority | Source |
 |---|---|
 | 1 | Per-request key passed in the SDK call |
 | 2 | `llmApiKey` in `bridge.config.ts` |
-| 3 | `AUTOBRIDGE_ANTHROPIC_KEY` environment variable |
+| 3 | `WIREBRIDGE_ANTHROPIC_KEY` environment variable |
 | 4 | `ANTHROPIC_API_KEY` environment variable |
 | 5 | Key saved in the dashboard (encrypted in DB) |
 | — | Convention-only mode (no LLM synthesis) |
@@ -357,10 +357,10 @@ Keys are AES-256-GCM encrypted at rest and never logged or exposed via any API r
 | Variable | Default | Description |
 |---|---|---|
 | `ANTHROPIC_API_KEY` | — | Claude API key for LLM synthesis |
-| `AUTOBRIDGE_ANTHROPIC_KEY` | — | AutoBridge-specific key (takes priority over above) |
-| `AUTOBRIDGE_ENCRYPTION_SECRET` | `autobridge-dev-secret-...` | Secret for key encryption — **change in production** |
-| `AUTOBRIDGE_BRIDGE_URL` | `http://localhost:7331` | Bridge server URL (used by SDKs) |
-| `AUTOBRIDGE_SERVICE_ID` | auto-generated | Stable service identity across restarts (set in prod) |
+| `WIREBRIDGE_ANTHROPIC_KEY` | — | WireBridge-specific key (takes priority over above) |
+| `WIREBRIDGE_ENCRYPTION_SECRET` | `wirebridge-dev-secret-...` | Secret for key encryption — **change in production** |
+| `WIREBRIDGE_BRIDGE_URL` | `http://localhost:7331` | Bridge server URL (used by SDKs) |
+| `WIREBRIDGE_SERVICE_ID` | auto-generated | Stable service identity across restarts (set in prod) |
 
 ---
 
@@ -446,21 +446,21 @@ Add and manage Claude API keys. Keys are stored AES-256 encrypted and shown only
 
 | Language | Framework/Runtime | Install | Status |
 |---|---|---|---|
-| Python | Flask | `pip install autobridge-sdk` | ✅ Full |
-| Python | FastAPI | `pip install autobridge-sdk` | ✅ Full |
-| Python | Django | `pip install autobridge-sdk` | ✅ Full |
-| Python | Bottle | `pip install autobridge-sdk` | ✅ Full |
-| TypeScript | Express | `npm i @autobridge/sdk` | ✅ Full |
-| TypeScript | Fastify | `npm i @autobridge/sdk` | ✅ Full |
-| TypeScript | Next.js | `npm i @autobridge/sdk` | ✅ Full |
-| JavaScript | Any Node.js | `npm i @autobridge/sdk` | ✅ Full |
-| Go | net/http | `go get github.com/autobridge/sdk-go` | ✅ Full |
-| Go | Gin | `go get github.com/autobridge/sdk-go` | ✅ Full |
-| Go | Echo / Chi / Fiber | `go get github.com/autobridge/sdk-go` | ✅ Full |
-| Ruby | Rails | `gem install autobridge-sdk` | ✅ Full |
-| Ruby | Sinatra | `gem install autobridge-sdk` | ✅ Full |
-| Ruby | Rack | `gem install autobridge-sdk` | ✅ Full |
-| PHP | Laravel | `composer require autobridge/sdk-laravel` | ✅ Full |
+| Python | Flask | `pip install wirebridge-sdk` | ✅ Full |
+| Python | FastAPI | `pip install wirebridge-sdk` | ✅ Full |
+| Python | Django | `pip install wirebridge-sdk` | ✅ Full |
+| Python | Bottle | `pip install wirebridge-sdk` | ✅ Full |
+| TypeScript | Express | `npm i @wirebridge/sdk` | ✅ Full |
+| TypeScript | Fastify | `npm i @wirebridge/sdk` | ✅ Full |
+| TypeScript | Next.js | `npm i @wirebridge/sdk` | ✅ Full |
+| JavaScript | Any Node.js | `npm i @wirebridge/sdk` | ✅ Full |
+| Go | net/http | `go get github.com/wirebridge/sdk-go` | ✅ Full |
+| Go | Gin | `go get github.com/wirebridge/sdk-go` | ✅ Full |
+| Go | Echo / Chi / Fiber | `go get github.com/wirebridge/sdk-go` | ✅ Full |
+| Ruby | Rails | `gem install wirebridge-sdk` | ✅ Full |
+| Ruby | Sinatra | `gem install wirebridge-sdk` | ✅ Full |
+| Ruby | Rack | `gem install wirebridge-sdk` | ✅ Full |
+| PHP | Laravel | `composer require wirebridge/sdk-laravel` | ✅ Full |
 | PHP | Symfony | Coming soon | 🔜 |
 | Java | Spring Boot | Coming soon | 🔜 |
 | Rust | Axum / Actix | Coming soon | 🔜 |
@@ -470,7 +470,7 @@ Add and manage Claude API keys. Keys are stored AES-256 encrypted and shown only
 ## Project structure
 
 ```
-autobridge/
+wirebridge/
 │
 ├── core/                        # Bridge server — the heart of everything
 │   └── src/
@@ -493,7 +493,7 @@ autobridge/
 │       └── server.ts            # Fastify HTTP server — wires it all together
 │
 ├── sdk-python/                  # Python SDK
-│   └── autobridge/
+│   └── wirebridge/
 │       └── __init__.py          # BridgeClient, schema helpers, Flask/FastAPI integration
 │
 ├── sdk-ts/                      # TypeScript/JS SDK
@@ -501,20 +501,20 @@ autobridge/
 │       └── index.ts             # BackendBridge, FrontendBridge, schema helpers
 │
 ├── sdk-go/                      # Go SDK
-│   └── autobridge.go            # Client, schema types, net/http middleware, Gin helper
+│   └── wirebridge.go            # Client, schema types, net/http middleware, Gin helper
 │
 ├── sdk-ruby/                    # Ruby SDK
 │   └── lib/
-│       └── autobridge.rb        # Client, Rails/Sinatra/Rack integrations
+│       └── wirebridge.rb        # Client, Rails/Sinatra/Rack integrations
 │
 ├── sdk-laravel/                 # Laravel/PHP SDK
 │   ├── src/
-│   │   ├── BridgeClient.php               # Core client
-│   │   ├── Schema.php                     # Schema helpers
-│   │   ├── AutoBridgeServiceProvider.php  # Laravel service provider
-│   │   ├── Facades/Bridge.php             # Laravel facade
-│   │   └── Support/RegisterCommand.php    # php artisan autobridge:register
-│   └── config/autobridge.php              # Published config file
+│   │   ├── BridgeClient.php                # Core client
+│   │   ├── Schema.php                      # Schema helpers
+│   │   ├── WireBridgeServiceProvider.php   # Laravel service provider
+│   │   ├── Facades/Bridge.php              # Laravel facade
+│   │   └── Support/RegisterCommand.php     # php artisan wirebridge:register
+│   └── config/wirebridge.php               # Published config file
 │
 ├── dashboard/                   # React management dashboard
 │   └── src/
@@ -561,13 +561,13 @@ In development, service IDs are auto-generated. In production, set them explicit
 
 ```bash
 # .env or environment
-AUTOBRIDGE_SERVICE_ID=prod-user-service-v1
+WIREBRIDGE_SERVICE_ID=prod-user-service-v1
 ```
 
 ### Change the encryption secret
 
 ```bash
-export AUTOBRIDGE_ENCRYPTION_SECRET=your-strong-random-secret-here
+export WIREBRIDGE_ENCRYPTION_SECRET=your-strong-random-secret-here
 ```
 
 Never use the default in production — it's hardcoded and public.
@@ -595,9 +595,9 @@ location / {
 
 ## Security
 
-**Keys** — API keys are AES-256-GCM encrypted before storage. The encryption key is derived from `AUTOBRIDGE_ENCRYPTION_SECRET`. Keys are never logged, never returned in full via any API endpoint, and shown only as masked previews in the dashboard.
+**Keys** — API keys are AES-256-GCM encrypted before storage. The encryption key is derived from `WIREBRIDGE_ENCRYPTION_SECRET`. Keys are never logged, never returned in full via any API endpoint, and shown only as masked previews in the dashboard.
 
-**Generated endpoints** — Every `/bridge/*` endpoint requires an active contract. There is no way to call a backend through AutoBridge without a contract existing. Contracts that are `pending_approval`, `rejected`, `drifted`, or `deprecated` return appropriate error responses.
+**Generated endpoints** — Every `/bridge/*` endpoint requires an active contract. There is no way to call a backend through WireBridge without a contract existing. Contracts that are `pending_approval`, `rejected`, `drifted`, or `deprecated` return appropriate error responses.
 
 **Auth passthrough** — The proxy layer forwards `Authorization` and `X-Api-Key` headers from incoming requests to the backend. Backend auth is not bypassed.
 
@@ -608,7 +608,7 @@ location / {
 ## FAQ
 
 **Does this add latency?**
-Convention-resolved contracts add a single SQLite lookup (sub-millisecond) plus the proxy HTTP hop. The `X-AutoBridge-Duration` response header shows total bridge overhead. Under 5ms on local networks in practice.
+Convention-resolved contracts add a single SQLite lookup (sub-millisecond) plus the proxy HTTP hop. The `X-WireBridge-Duration` response header shows total bridge overhead. Under 5ms on local networks in practice.
 
 **What happens if the bridge goes down?**
 Requests to `/bridge/*` fail with network errors. The bridge is a single point of failure today — run it with PM2 or systemd. Multi-instance support with a shared PostgreSQL store is on the roadmap.

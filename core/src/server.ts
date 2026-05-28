@@ -1,5 +1,5 @@
 /**
- * AutoBridge Core Server
+ * WireBridge Core Server
  * The central HTTP server that:
  * 1. Accepts manifest registrations from SDKs
  * 2. Resolves intents → contracts (convention first, LLM fallback)
@@ -43,14 +43,14 @@ export async function createBridgeServer(config: BridgeConfig = {}) {
     autoApproveThreshold = 0.85,
   } = config;
 
-  console.log('[AutoBridge] Initializing server...');
+  console.log('[WireBridge] Initializing server...');
 
   // ─── CORE SERVICES ─────────────────────────────────────────────────────────
-  console.log('[AutoBridge] Creating contract store...');
+  console.log('[WireBridge] Creating contract store...');
   const store = new ContractStore(dbPath);
-  console.log('[AutoBridge] Initializing database...');
+  console.log('[WireBridge] Initializing database...');
   await store.init();           // sql.js requires async WASM init
-  console.log('[AutoBridge] Database initialized');
+  console.log('[WireBridge] Database initialized');
   const conventionResolver = new ConventionResolver();
   const llmSynthesizer = new LLMSynthesizer();
   const eventBus = new EventBus();
@@ -83,7 +83,7 @@ export async function createBridgeServer(config: BridgeConfig = {}) {
   setInterval(() => {
     const offline = driftDetector.checkOfflineServices(backendManifests);
     for (const sid of offline) {
-      app.log.warn(`[AutoBridge] Service ${sid} appears offline — contracts drifted`);
+      app.log.warn(`[WireBridge] Service ${sid} appears offline — contracts drifted`);
     }
   }, 60_000);
 
@@ -118,7 +118,7 @@ export async function createBridgeServer(config: BridgeConfig = {}) {
       backendManifests.set(manifest.serviceId, manifest);
       store.saveBackendManifest(manifest);
 
-      app.log.info(`[AutoBridge] Backend registered: ${manifest.serviceName} (${manifest.capabilities.length} capabilities)`);
+      app.log.info(`[WireBridge] Backend registered: ${manifest.serviceName} (${manifest.capabilities.length} capabilities)`);
 
       eventBus.emit('backend:registered', {
         serviceId: manifest.serviceId,
@@ -150,7 +150,7 @@ export async function createBridgeServer(config: BridgeConfig = {}) {
       frontendManifests.set(manifest.appId, manifest);
       store.saveFrontendManifest(manifest);
 
-      app.log.info(`[AutoBridge] Frontend registered: ${manifest.appName} (${manifest.intents.length} intents)`);
+      app.log.info(`[WireBridge] Frontend registered: ${manifest.appName} (${manifest.intents.length} intents)`);
 
       // Resolve intents immediately
       const resolved = await resolveForApp(manifest.appId, req.body.apiKey);
@@ -345,13 +345,13 @@ export async function createBridgeServer(config: BridgeConfig = {}) {
     // 2. LLM pass
     const apiKey = requestApiKey
       || configApiKey
-      || process.env.AUTOBRIDGE_ANTHROPIC_KEY
+      || process.env.WIREBRIDGE_ANTHROPIC_KEY
       || process.env.ANTHROPIC_API_KEY
       || store.getProjectApiKey()
       || undefined;
 
     if (!apiKey) {
-      app.log.warn(`[AutoBridge] No API key available for LLM synthesis — intent ${intentId} unresolved`);
+      app.log.warn(`[WireBridge] No API key available for LLM synthesis — intent ${intentId} unresolved`);
       return null;
     }
 
@@ -431,7 +431,7 @@ export async function createBridgeServer(config: BridgeConfig = {}) {
   // ─── START ──────────────────────────────────────────────────────────────────
 
   await app.listen({ port, host: '0.0.0.0' });
-  app.log.info(`🌉 AutoBridge running on http://localhost:${port}`);
+  app.log.info(`WireBridge running on http://localhost:${port}`);
 
   return { app, store };
 }
@@ -440,7 +440,7 @@ export async function createBridgeServer(config: BridgeConfig = {}) {
 // Auto-start the server when this file is run directly
 const config = {
   port: process.env.PORT ? parseInt(process.env.PORT, 10) : 7331,
-  dbPath: process.env.DB_PATH || '.autobridge/bridge.db',
+  dbPath: process.env.DB_PATH || '.wiebridge/bridge.db',
   llmApiKey: process.env.ANTHROPIC_API_KEY,
   llmModel: 'claude-sonnet-4-20250514',
   autoApprove: true,
@@ -448,6 +448,6 @@ const config = {
 };
 
 createBridgeServer(config).catch((err) => {
-  console.error('Failed to start AutoBridge server:', err);
+  console.error('Failed to start WireBridge server:', err);
   process.exit(1);
 });

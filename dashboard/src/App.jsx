@@ -494,7 +494,7 @@ function KeysTab() {
             <span className="text-zinc-700">2.</span> Project key (set in bridge.config.ts)
           </li>
           <li className="flex items-center gap-2">
-            <span className="text-zinc-700">3.</span> Environment variable (AUTOBRIDGE_ANTHROPIC_KEY)
+            <span className="text-zinc-700">3.</span> Environment variable (WIREBRIDGE_ANTHROPIC_KEY)
           </li>
           <li className="flex items-center gap-2">
             <span className="text-zinc-700">4.</span> Key saved here in the dashboard
@@ -702,7 +702,7 @@ export default function App() {
               <Icon.Bridge />
             </div>
             <div>
-              <div className="text-sm font-medium tracking-tight">AutoBridge</div>
+              <div className="text-sm font-medium tracking-tight">WireBridge</div>
               <div className="text-xs text-zinc-600">runtime wiring layer</div>
             </div>
           </div>

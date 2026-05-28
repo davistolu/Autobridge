@@ -1,16 +1,16 @@
 <?php
 
-namespace AutoBridge\Facades;
+namespace WireBridge\Facades;
 
 use Illuminate\Support\Facades\Facade;
 
 /**
- * AutoBridge Facade
+ * WireBridge Facade
  *
  * Provides static access to the BridgeClient singleton.
  *
  * Usage:
- *   use AutoBridge\Facades\Bridge;
+ *   use WireBridge\Facades\Bridge;
  *
  *   Bridge::capability('list users', [...])
  *        ->capability('create user', [...])
@@ -20,6 +20,6 @@ class Bridge extends Facade
 {
     protected static function getFacadeAccessor(): string
     {
-        return 'autobridge';
+        return 'wirebridge';
     }
 }

@@ -1,12 +1,12 @@
 /**
- * Example: React frontend with AutoBridge
+ * Example: React frontend with WireBridge
  * 
  * The frontend declares what it NEEDS.
- * AutoBridge figures out which backend provides it.
+ * WireBridge figures out which backend provides it.
  */
 
 import { useEffect, useState } from 'react';
-import { FrontendBridge, s } from '@autobridge/sdk';
+import { FrontendBridge, s } from '@wirebridge/sdk';
 
 // ─── Initialize Bridge ────────────────────────────────────────────────────────
 const bridge = new FrontendBridge({
@@ -19,13 +19,13 @@ const bridge = new FrontendBridge({
 // ─── Register on startup ──────────────────────────────────────────────────────
 // Call this once — in main.tsx or a provider
 bridge.register().then(({ resolved, pending, endpoints }) => {
-  console.log(`AutoBridge: ${resolved} resolved, ${pending} pending`);
+  console.log(`WireBridge: ${resolved} resolved, ${pending} pending`);
   console.log('Endpoints:', endpoints);
 });
 
 // ─── Example 1: Direct usage ──────────────────────────────────────────────────
 async function loadUsers() {
-  // Declare what you need — AutoBridge finds the endpoint
+  // Declare what you need — WireBridge finds the endpoint
   const endpoint = bridge.intent('list users with name and email', {
     requiredFields: ['name', 'email'],
     action: 'read',
@@ -58,7 +58,7 @@ export function UserList() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // AutoBridge has already resolved the endpoint — just use it
+    // WireBridge has already resolved the endpoint — just use it
     loadUsers()
       .then(data => {
         setUsers(data.users);

@@ -1,4 +1,4 @@
-// Example: Go backend with AutoBridge
+// Example: Go backend with WireBridge
 // Works with net/http, Gin, Echo, Chi, or any other Go HTTP framework.
 package main
 
@@ -7,12 +7,12 @@ import (
 	"log"
 	"net/http"
 
-	autobridge "github.com/autobridge/sdk-go"
+	wirebridge "github.com/wirebridge/sdk-go"
 )
 
 func main() {
-	// ─── Configure AutoBridge ───────────────────────────────────────────────
-	bridge := autobridge.New(autobridge.Config{
+	// ─── Configure WireBridge ───────────────────────────────────────────────
+	bridge := wirebridge.New(wirebridge.Config{
 		ServiceName: "inventory-service",
 		BaseURL:     "http://localhost:8080",
 		// APIKey: "sk-ant-...", // or set ANTHROPIC_API_KEY env var
@@ -20,61 +20,61 @@ func main() {
 
 	// ─── Declare Capabilities ───────────────────────────────────────────────
 	bridge.
-		Capability(autobridge.Cap{
+		Capability(wirebridge.Cap{
 			Name:    "list products",
 			Handler: "/api/products",
 			Method:  "GET",
 			Tags:    []string{"products", "read", "list", "inventory"},
-			Output: autobridge.Schema{
-				"products": autobridge.ArrayOf(autobridge.ObjectOf(autobridge.Fields{
-					"id":       autobridge.String(),
-					"name":     autobridge.String(),
-					"price":    autobridge.Number(),
-					"stock":    autobridge.Number(),
-					"category": autobridge.Optional(autobridge.String()),
+			Output: wirebridge.Schema{
+				"products": wirebridge.ArrayOf(wirebridge.ObjectOf(wirebridge.Fields{
+					"id":       wirebridge.String(),
+					"name":     wirebridge.String(),
+					"price":    wirebridge.Number(),
+					"stock":    wirebridge.Number(),
+					"category": wirebridge.Optional(wirebridge.String()),
 				})),
-				"total": autobridge.Number(),
+				"total": wirebridge.Number(),
 			},
 		}).
-		Capability(autobridge.Cap{
+		Capability(wirebridge.Cap{
 			Name:        "get product by id",
 			Handler:     "/api/products/{id}",
 			Method:      "GET",
 			Description: "Fetch a single product with full details",
 			Tags:        []string{"products", "read", "detail"},
-			Input: autobridge.Schema{
-				"id": autobridge.String(),
+			Input: wirebridge.Schema{
+				"id": wirebridge.String(),
 			},
-			Output: autobridge.Schema{
-				"product": autobridge.ObjectOf(autobridge.Fields{
-					"id":          autobridge.String(),
-					"name":        autobridge.String(),
-					"price":       autobridge.Number(),
-					"description": autobridge.Optional(autobridge.String()),
-					"stock":       autobridge.Number(),
+			Output: wirebridge.Schema{
+				"product": wirebridge.ObjectOf(wirebridge.Fields{
+					"id":          wirebridge.String(),
+					"name":        wirebridge.String(),
+					"price":       wirebridge.Number(),
+					"description": wirebridge.Optional(wirebridge.String()),
+					"stock":       wirebridge.Number(),
 				}),
 			},
 		}).
-		Capability(autobridge.Cap{
+		Capability(wirebridge.Cap{
 			Name:    "create product",
 			Handler: "/api/products",
 			Method:  "POST",
 			Tags:    []string{"products", "create", "write"},
-			Input: autobridge.Schema{
-				"name":  autobridge.String(),
-				"price": autobridge.Number(),
-				"stock": autobridge.Number(),
+			Input: wirebridge.Schema{
+				"name":  wirebridge.String(),
+				"price": wirebridge.Number(),
+				"stock": wirebridge.Number(),
 			},
-			Output: autobridge.Schema{
-				"product": autobridge.ObjectOf(autobridge.Fields{
-					"id":    autobridge.String(),
-					"name":  autobridge.String(),
-					"price": autobridge.Number(),
+			Output: wirebridge.Schema{
+				"product": wirebridge.ObjectOf(wirebridge.Fields{
+					"id":    wirebridge.String(),
+					"name":  wirebridge.String(),
+					"price": wirebridge.Number(),
 				}),
 			},
 		})
 
-	// ─── Register with AutoBridge ───────────────────────────────────────────
+	// ─── Register with WireBridge ───────────────────────────────────────────
 	// MustRegister panics on failure — swap to Register() for graceful handling
 	bridge.MustRegister()
 	defer bridge.Stop()
@@ -112,7 +112,7 @@ func main() {
 		})
 	})
 
-	// Wrap with AutoBridge middleware (auto-registers on first request as backup)
+	// Wrap with WireBridge middleware (auto-registers on first request as backup)
 	log.Println("Inventory service listening on :8080")
 	log.Fatal(http.ListenAndServe(":8080", bridge.Middleware(mux)))
 }

@@ -1,0 +1,6 @@
+name = "wirebridge-sdk"
+version = "0.1.0"
+description = "WireBridge Python SDK"
+authors = [
+  { name="WireBridge" }
+]

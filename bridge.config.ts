@@ -1,9 +1,9 @@
 /**
- * AutoBridge Project Configuration
+ * WireBridge Project Configuration
  * Place this in your project root.
  */
 
-import type { BridgeConfig } from '@autobridge/core';
+import type { BridgeConfig } from '@wirebridge/core';
 
 const config: BridgeConfig = {
   // Bridge server port
@@ -11,10 +11,10 @@ const config: BridgeConfig = {
 
   // SQLite DB path (relative to project root)
   // For production, use a PostgreSQL connection string instead
-  dbPath: '.autobridge/bridge.db',
+  dbPath: '.wirebridge/bridge.db',
 
   // Claude API key for LLM synthesis
-  // Priority: request-level > this > AUTOBRIDGE_ANTHROPIC_KEY env var > dashboard key
+  // Priority: request-level > this > WIREBRIDGE_ANTHROPIC_KEY env var > dashboard key
   llmApiKey: process.env.ANTHROPIC_API_KEY,
 
   // Claude model to use for synthesis
