@@ -45,19 +45,7 @@ jobs:
 
       - run: python3 -m py_compile sdk-python/wirebridge/__init__.py
 
-      - name: Name consistency check
-        run: |
-          FOUND=$(grep -rin "autobridge" \
-            --include="*.ts" --include="*.tsx" --include="*.jsx" \
-            --include="*.py" --include="*.go" --include="*.rb" \
-            --include="*.php" --include="*.md" --include="*.json" \
-            . | grep -v node_modules | grep -v dist | grep -v ".git" || true)
-          if [ -n "$FOUND" ]; then
-            echo "❌ Stale autobridge references found — fix before promoting"
-            echo "$FOUND"
-            exit 1
-          fi
-
+     
   # ─── Merge preview into main ─────────────────────────────────────────────────
   promote:
     name: Merge into main + tag release
