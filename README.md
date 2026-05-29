@@ -146,6 +146,8 @@ bridge.register()
 **TypeScript / Node.js (Express / Fastify / Next.js)**
 
 ```typescript
+npm i @wirebridge/sdk
+
 import { BackendBridge, s } from '@wirebridge/sdk';
 
 const bridge = new BackendBridge({
@@ -273,6 +275,8 @@ Bridge::capability('list users', [...])
 **React / Next.js / Vue / Any JS framework**
 
 ```typescript
+npm i @wirebridge/sdk
+
 import { FrontendBridge } from '@wirebridge/sdk';
 
 const bridge = new FrontendBridge({
