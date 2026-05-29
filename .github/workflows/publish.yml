@@ -81,25 +81,4 @@ jobs:
         env:
           GEM_HOST_API_KEY: ${{ secrets.RUBYGEMS_TOKEN }}
 
-  # ─── Packagist — Laravel SDK ─────────────────────────────────────────────
-  # Packagist auto-syncs when a new tag is pushed to github.com/wirebridge/sdk-laravel
-  # No action needed here — just document it.
-  packagist-note:
-    name: Packagist (auto-sync)
-    runs-on: ubuntu-latest
-    steps:
-      - name: Note
-        run: |
-          echo "Packagist syncs automatically from the new tag."
-          echo "Verify at: https://packagist.org/packages/wirebridge/sdk-laravel"
-
-  # ─── Go modules — Go SDK ─────────────────────────────────────────────────
-  # Go modules are resolved directly from GitHub tags — no registry push needed.
-  go-note:
-    name: Go modules (tag-based)
-    runs-on: ubuntu-latest
-    steps:
-      - name: Note
-        run: |
-          echo "Go modules resolve from the GitHub tag automatically."
-          echo "go get github.com/wirebridge/sdk-go@${{ github.ref_name }} will work."
+  

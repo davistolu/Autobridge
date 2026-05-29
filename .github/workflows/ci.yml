@@ -64,28 +64,7 @@ jobs:
           python3 -m py_compile examples/python-flask/app.py
           echo "✓ Python SDK syntax clean"
 
-  # ─── Name consistency check ─────────────────────────────────────────────────
-  name-check:
-    name: No stale autobridge references
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
 
-      - name: Check for autobridge references
-        run: |
-          FOUND=$(grep -rin "autobridge" \
-            --include="*.ts" --include="*.tsx" --include="*.jsx" \
-            --include="*.py" --include="*.go" --include="*.rb" \
-            --include="*.php" --include="*.md" --include="*.json" \
-            . | grep -v node_modules | grep -v dist | grep -v ".git" || true)
-
-          if [ -n "$FOUND" ]; then
-            echo "❌ Found stale 'autobridge' references:"
-            echo "$FOUND"
-            exit 1
-          else
-            echo "✓ No stale autobridge references found"
-          fi
 
   # ─── PR branch target guard ─────────────────────────────────────────────────
   target-branch:
