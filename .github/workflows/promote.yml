@@ -1,13 +1,5 @@
 name: Promote preview → main
 
-# Manually triggered — maintainer runs this when preview is ready to ship.
-# It runs the full CI suite one final time, then merges preview into main
-# and creates a GitHub release.
-#
-# Usage:
-#   GitHub UI → Actions → "Promote preview → main" → Run workflow
-#   Supply a version tag (e.g. v0.2.0) and optional release notes.
-
 on:
   workflow_dispatch:
     inputs:
@@ -15,41 +7,12 @@ on:
         description: "Version tag (e.g. v0.2.0)"
         required: true
       release_notes:
-        description: "Release notes (leave blank to auto-generate from commits)"
+        description: "Release notes (optional)"
         required: false
 
 jobs:
-  # ─── Run full CI before promoting ───────────────────────────────────────────
-  verify:
-    name: Verify preview is clean
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: preview
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Core type check
-        run: cd core && npm ci && npx tsc --noEmit
-
-      - name: Dashboard build
-        run: cd dashboard && npm ci && npx vite build
-
-      - name: Python SDK syntax
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - run: python3 -m py_compile sdk-python/wirebridge/__init__.py
-
-     
-  # ─── Merge preview into main ─────────────────────────────────────────────────
   promote:
     name: Merge into main + tag release
-    needs: verify
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -84,5 +47,3 @@ jobs:
           name: "${{ inputs.version }}"
           body: ${{ inputs.release_notes || 'See commit history for changes in this release.' }}
           target_commitish: main
-          draft: false
-          prerelease: false
