@@ -176,7 +176,7 @@ await bridge.register();
 **Go (net/http / Gin / Echo / Chi / Fiber)**
 
 ```go
-import wirebridge "github.com/wirebridge/sdk-go"
+import wirebridge "github.com/davistolu/sdk-go"
 
 bridge := wirebridge.New(wirebridge.Config{
     ServiceName: "user-service",
@@ -458,9 +458,9 @@ Add and manage Claude API keys. Keys are stored AES-256 encrypted and shown only
 | TypeScript | Fastify | `npm i @wirebridge/sdk` | ✅ Full |
 | TypeScript | Next.js | `npm i @wirebridge/sdk` | ✅ Full |
 | JavaScript | Any Node.js | `npm i @wirebridge/sdk` | ✅ Full |
-| Go | net/http | `go get github.com/wirebridge/sdk-go` | ✅ Full |
-| Go | Gin | `go get github.com/wirebridge/sdk-go` | ✅ Full |
-| Go | Echo / Chi / Fiber | `go get github.com/wirebridge/sdk-go` | ✅ Full |
+| Go | net/http | `go get github.com/davistolu/sdk-go` | ✅ Full |
+| Go | Gin | `go get github.com/davistolu/sdk-go` | ✅ Full |
+| Go | Echo / Chi / Fiber | `go get github.com/davistolu/sdk-go` | ✅ Full |
 | Ruby | Rails | `gem install wirebridge-sdk` | ✅ Full |
 | Ruby | Sinatra | `gem install wirebridge-sdk` | ✅ Full |
 | Ruby | Rack | `gem install wirebridge-sdk` | ✅ Full |
