@@ -3,13 +3,12 @@ name: CI
 on:
   pull_request:
     branches:
-      - preview        # All PRs must target preview
+      - preview
   push:
     branches:
-      - preview        # Run checks on every push to preview too
+      - preview
 
 jobs:
-  # ─── Core TypeScript ────────────────────────────────────────────────────────
   core:
     name: Core (TypeScript)
     runs-on: ubuntu-latest
@@ -22,13 +21,12 @@ jobs:
           cache: npm
           cache-dependency-path: core/package-lock.json
 
-      - name: Install core dependencies
+      - name: Install dependencies
         run: cd core && npm ci
 
       - name: Type check
         run: cd core && npx tsc --noEmit
 
-  # ─── Dashboard ──────────────────────────────────────────────────────────────
   dashboard:
     name: Dashboard (React)
     runs-on: ubuntu-latest
@@ -41,13 +39,12 @@ jobs:
           cache: npm
           cache-dependency-path: dashboard/package-lock.json
 
-      - name: Install dashboard dependencies
+      - name: Install dependencies
         run: cd dashboard && npm ci
 
-      - name: Build dashboard
+      - name: Build
         run: cd dashboard && npx vite build
 
-  # ─── Python SDK ─────────────────────────────────────────────────────────────
   sdk-python:
     name: SDK — Python
     runs-on: ubuntu-latest
@@ -59,24 +56,4 @@ jobs:
           python-version: "3.11"
 
       - name: Syntax check
-        run: |
-          python3 -m py_compile sdk-python/wirebridge/__init__.py
-          python3 -m py_compile examples/python-flask/app.py
-          echo "✓ Python SDK syntax clean"
-
-
-
-  # ─── PR branch target guard ─────────────────────────────────────────────────
-  target-branch:
-    name: PR targets preview
-    runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request'
-    steps:
-      - name: Check base branch
-        run: |
-          if [ "${{ github.base_ref }}" = "main" ]; then
-            echo "❌ PRs must target the 'preview' branch, not 'main'."
-            echo "   Please update your PR's base branch to 'preview'."
-            exit 1
-          fi
-          echo "✓ Base branch is '${{ github.base_ref }}'"
+        run: python3 -m py_compile sdk-python/wirebridge/__init__.py

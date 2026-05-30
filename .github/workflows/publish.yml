@@ -1,27 +1,13 @@
 name: Publish SDKs
 
-# Fires after promote.yml creates a version tag on main.
-# Publishes all SDKs to their respective package registries simultaneously.
-#
-# Required secrets (Settings → Secrets → Actions):
-#   NPM_TOKEN       — npmjs.com access token
-#   PYPI_TOKEN      — PyPI API token
-#   RUBYGEMS_TOKEN  — RubyGems API key
-#
-# Packagist (PHP/Laravel) and Go modules update automatically from the
-# new tag — no secrets or push steps needed for those.
-
 on:
   push:
     tags:
-      - "v*"           # Only runs when a version tag is pushed to any branch
-    branches:
-      - main           # Extra guard — only act on tags that land on main
+      - "v*"
 
 jobs:
-  # ─── npm — TypeScript/JS SDK ──────────────────────────────────────────────
   publish-npm:
-    name: Publish → npm (@wirebridge/sdk)
+    name: Publish → npm
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -31,17 +17,14 @@ jobs:
           node-version: 20
           registry-url: "https://registry.npmjs.org"
 
-      - name: Install and build
-        run: cd sdk-ts && npm ci && npm run build
+      - run: cd sdk-ts && npm ci && npm run build
 
-      - name: Publish
-        run: cd sdk-ts && npm publish --access public
+      - run: cd sdk-ts && npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-  # ─── PyPI — Python SDK ────────────────────────────────────────────────────
   publish-pypi:
-    name: Publish → PyPI (wirebridge-sdk)
+    name: Publish → PyPI
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -50,21 +33,17 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Install build tools
-        run: pip install build twine
+      - run: pip install build twine
 
-      - name: Build
-        run: cd sdk-python && python -m build
+      - run: cd sdk-python && python -m build
 
-      - name: Publish
-        run: twine upload sdk-python/dist/*
+      - run: twine upload sdk-python/dist/*
         env:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.PYPI_TOKEN }}
 
-  # ─── RubyGems — Ruby SDK ─────────────────────────────────────────────────
   publish-gem:
-    name: Publish → RubyGems (wirebridge-sdk)
+    name: Publish → RubyGems
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -73,12 +52,8 @@ jobs:
         with:
           ruby-version: "3.2"
 
-      - name: Build gem
-        run: cd sdk-ruby && gem build wirebridge-sdk.gemspec
+      - run: cd sdk-ruby && gem build wirebridge-sdk.gemspec
 
-      - name: Publish
-        run: cd sdk-ruby && gem push *.gem
+      - run: cd sdk-ruby && gem push *.gem
         env:
           GEM_HOST_API_KEY: ${{ secrets.RUBYGEMS_TOKEN }}
-
-  
