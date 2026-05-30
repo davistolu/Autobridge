@@ -44,7 +44,7 @@ your-feature-branch  →  preview  →  (release)  →  main
 ### Clone and install
 
 ```bash
-git clone https://github.com/davistolu/wirebridge
+git clone https://github.com/davistolu/autobridge
 cd wirebridge
 
 # Core + dashboard
@@ -74,7 +74,7 @@ cd dashboard && npm run dev
 ### 1. Fork and branch off `preview`
 
 ```bash
-git clone https://github.com/<your-username>/wirebridge
+git clone https://github.com/<your-username>/autobridge
 cd wirebridge
 git checkout preview
 git checkout -b feat/my-feature
