@@ -87,7 +87,7 @@ When a backend re-registers with changed capabilities, the drift detector compar
 ### 1. Start the bridge server
 
 ```bash
-git clone https://github.com/davistolu/wirebridge
+git clone https://github.com/davistolu/autobridge
 cd wirebridge/core
 npm install
 npm run dev
