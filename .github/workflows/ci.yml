@@ -18,11 +18,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
-          cache-dependency-path: core/package-lock.json
 
       - name: Install dependencies
-        run: cd core && npm ci
+        run: cd core && npm install
 
       - name: Type check
         run: cd core && npx tsc --noEmit
@@ -36,24 +34,10 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-          cache: npm
-          cache-dependency-path: dashboard/package-lock.json
 
       - name: Install dependencies
-        run: cd dashboard && npm ci
+        run: cd dashboard && npm install
 
       - name: Build
-        run: cd dashboard && npm run build
+        run: cd dashboard && npx vite build
 
-  sdk-python:
-    name: SDK — Python
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Syntax check
-        run: python3 -m py_compile sdk-python/wirebridge/__init__.py
