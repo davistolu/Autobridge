@@ -22,10 +22,10 @@ jobs:
           cache-dependency-path: core/package-lock.json
 
       - name: Install dependencies
-        run: cd core && npm run install
+        run: cd core && npm ci
 
       - name: Type check
-        run: cd core && npm tsc --noEmit
+        run: cd core && npx tsc --noEmit
 
   dashboard:
     name: Dashboard (React)
@@ -40,7 +40,7 @@ jobs:
           cache-dependency-path: dashboard/package-lock.json
 
       - name: Install dependencies
-        run: cd dashboard && npm run install
+        run: cd dashboard && npm ci
 
       - name: Build
         run: cd dashboard && npm run build
