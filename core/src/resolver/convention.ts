@@ -35,11 +35,12 @@ const SYNONYMS: Record<string, string[]> = {
   create: ['add', 'new', 'insert', 'post', 'make', 'register', 'save'],
   update: ['edit', 'modify', 'change', 'patch', 'put', 'set'],
   delete: ['remove', 'destroy', 'drop', 'purge', 'clear'],
-  user: ['users', 'member', 'members', 'account', 'accounts', 'profile', 'profiles', 'person', 'people'],
+  user: ['users', 'user', 'member', 'members', 'account', 'accounts', 'profile', 'profiles', 'person', 'people'],
   order: ['orders', 'purchase', 'purchases', 'transaction', 'transactions', 'sale', 'sales'],
   product: ['products', 'item', 'items', 'sku', 'catalog'],
   auth: ['login', 'logout', 'signin', 'signout', 'authenticate', 'session'],
   dashboard: ['stats', 'metrics', 'analytics', 'summary', 'overview'],
+  store: ['shops', 'shop', 'store', 'branch'],
 };
 
 function normalize(str: string): string {
